@@ -18,6 +18,16 @@ Together, these scripts form a complete system for **capturing, standardizing, a
 
 ---
 
+## System Visualization
+
+Below is an example of the imaging system output with defined regions of interest (ROIs):
+
+![ROI Preview](roi_preview_20260411_190307.png)
+
+- Circular ROIs correspond to detection wells (W1–W4)
+- Rectangular region defines background normalization area
+- Lower regions represent calibration swatches (white, gray, black)
+
 ## System Architecture
 
 - Raspberry Pi + Picamera2
@@ -106,3 +116,115 @@ Key functions:
 Purpose:
 - Track colorimetric signal evolution over time
 - Generate quantitative datasets for calibration and analysis
+
+---
+
+## ROI-Based Pixel Extraction
+
+Images are captured as pixel arrays and analyzed directly using OpenCV and NumPy.
+
+Regions of interest (ROIs) are spatially defined and include:
+
+- Circular ROIs for detection wells
+- Rectangular ROI for background normalization
+- Calibration swatches (white, gray, black)
+
+For each ROI, the script computes the **mean RGB intensity** across all pixels within the region.
+
+---
+
+## Color Metrics & Signal Processing
+
+To quantify colorimetric changes, the following metrics are computed:
+
+- **B − R (Blue minus Red)**  
+  Highlights blue-shifted reactions (e.g., Zincon complex formation)
+
+- **B / R (Blue-to-Red ratio)**  
+  Normalizes signal intensity relative to the red channel
+
+### Background Correction
+
+Each ROI is normalized against a background region:
+
+- ΔR = R_ROI − R_background  
+- ΔG = G_ROI − G_background  
+- ΔB = B_ROI − B_background  
+- Δ(B − R) = (ΔB − ΔR)
+
+This improves robustness against lighting variation and substrate effects.
+
+---
+
+## Data Output
+
+Each run generates:
+
+### CSV File
+- Timepoint (s)
+- Raw RGB values for all ROIs
+- Derived metrics (B−R, B/R)
+- Background-corrected values
+- Averaged assay signal
+
+### Image Files
+- Time-series captures (`.png`)
+- ROI overlay preview (first frame)
+
+### NumPy Arrays
+- Raw image data (`.npy`)
+- Enables reproducible analysis
+
+---
+
+## Printed Output Tables
+
+During execution, two formatted tables are printed:
+
+### Core Assay Table
+- Background values
+- Individual wells (W1–W4)
+- Averaged signal (W1–W3)
+- Derived metrics (B−R, B/R)
+- Background-corrected values
+
+### Swatch Calibration Table
+- White, gray, and black reference regions
+- Raw and normalized color values
+
+These tables provide immediate feedback for assessing signal quality during acquisition.
+
+---
+
+## Application
+
+This system is designed for quantitative colorimetric analysis in µPAD-based assays, including:
+
+- Heavy metal detection (e.g., Zn²⁺ with Zincon)
+- Reaction kinetics tracking
+- Calibration curve generation
+- Low-cost environmental sensing
+
+## Notes
+
+- ROI coordinates must be calibrated before use
+- Consistent device placement is required
+- Lighting uniformity significantly impacts results
+- Reaction localization within wells affects measurement accuracy
+
+---
+## Author
+
+Thomas Lau  
+Fordham University — B.S. Environmental Science
+
+## Project Context
+
+Developed as part of a senior research project on microfluidic paper-based analytical devices (µPADs) for environmental sensing.
+
+## Reccomendations For Future Work
+
+- Improve ROI alignment automation  
+- Integrate calibration curve generation  
+- Expand to additional analytes beyond Zn²⁺  
+
