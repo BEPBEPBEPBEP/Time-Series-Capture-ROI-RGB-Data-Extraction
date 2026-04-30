@@ -213,6 +213,59 @@ This system is designed for quantitative colorimetric analysis in µPAD-based as
 - Reaction localization within wells affects measurement accuracy
 
 ---
+## Software Dependencies
+
+The imaging workflow was developed in Python and executed directly on a Raspberry Pi. The scripts use standard Python libraries and Raspberry Pi-compatible camera and hardware interfaces for image capture, ROI extraction, color analysis, and LED control.
+
+### Required Python Libraries
+
+- **NumPy**  
+  Used for storing image arrays and calculating mean pixel intensity values from defined regions of interest (ROIs).
+
+- **OpenCV (`cv2`)**  
+  Used for image loading, ROI overlay generation, drawing circular/rectangular regions, and exporting annotated preview images.
+
+- **time / datetime**  
+  Used to control capture intervals and timestamp output files during time-series acquisition.
+
+- **os / pathlib**  
+  Used for file organization and automated output folder creation.
+
+- **subprocess**  
+  Used when calling Raspberry Pi camera utilities from within Python scripts.
+
+### Camera Control
+
+Image acquisition was performed using Raspberry Pi camera utilities compatible with the Arducam OV5647 camera module. Depending on the Raspberry Pi OS version, this may include:
+
+- `libcamera`
+- `rpicam-still`
+
+The scripts were designed to capture images at fixed intervals under locked exposure and white balance settings.
+
+### LED Control
+
+The Modulino Pixels RGB LED module was controlled through I²C communication using the Qwiic/STEMMA QT interface. Relevant hardware interface libraries may include:
+
+- `board`
+- `busio`
+- `smbus` / `smbus2`
+- compatible CircuitPython or vendor-provided libraries for RGB LED control
+
+### Output Files
+
+The scripts generate:
+
+- `.npy` files containing raw image array data
+- `.png` files for visual inspection and ROI verification
+- `.csv` files summarizing extracted RGB/grayscale values over time
+
+### Notes
+
+Exact package requirements may vary depending on Raspberry Pi OS version and camera configuration. Users should confirm camera functionality with `libcamera` or `rpicam-still` before running the time-series capture scripts.
+
+---
+
 ## Author
 
 Thomas Lau  
